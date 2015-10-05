@@ -70,3 +70,23 @@ body{
    margin-top: 20px;
 }
 
+#title_container{
+}
+
+.form_label{
+   font-size: 80px;
+}
+
+#title_textbox{
+   width: 550px;
+}
+
+#content_label{
+   text-align: center;
+}
+
+#content_textbox{
+   width: 99.5%;
+   border: none;
+}
+
