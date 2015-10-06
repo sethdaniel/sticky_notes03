@@ -90,3 +90,46 @@ body{
    border: none;
 }
 
+#color_chooser_container{
+   width: 100px;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+#color_chooser{
+   text-align: center;
+}
+
+.color_option{
+   text-align: center;
+}
+
+#red_option{
+   background-color: rgba(255, 0, 0, 0.7);
+}
+
+#orange_option{
+   background-color: rgba(255, 127, 0, 0.7);
+}
+
+#yellow_option{
+   background-color: rgba(255, 255, 0, 0.7);
+}
+
+#green_option{
+   background-color: rgba(0, 255, 0, 0.7);
+}
+
+#blue_option{
+   background-color: rgba(0, 0, 255, 0.7);
+}
+
+#purple_option{
+   background-color: rgba(75, 0, 130, 0.7);
+}
+
+#save_note_pseudobutton{
+   margin-left: auto;
+   margin-right: auto;
+}
+
