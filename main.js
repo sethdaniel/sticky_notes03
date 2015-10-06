@@ -61,6 +61,41 @@ function bondage(){
 
 /////////////////////////////FUNCTIONS//////////////////////////////
 
+//DESCRIPTION : Gets all saved notes in localstorage and puts them in an array.
+//@return : array allSavedNotesArr All saved notes from local storage as an array.
+function getAllSavedNotesAsArray(){
+   
+   //initialize vars
+   var allSavedNotesArr = new Array();
+   
+   //cycle through all localstorage
+   for(var i = 0; i < localStorage.length; i++){
+      
+      //get each object as JSON string
+      var currentLocalStorage = localStorage.getItem(localStorage.key(i));
+      
+      //get each object as js object
+      var currentLocalStorageDejsoned = JSON.parse(currentLocalStorage);
+      
+      //check that the object is a note object
+      if(currentLocalStorageDejsoned.type == 'note_object'){
+         
+         //if note object add to array
+         allSavedNotesArr.push(currentLocalStorageDejsoned);
+         
+      }
+      
+   }
+   
+   return allSavedNotesArr;
+   
+}
+
+
+
+
+
+
 //DESCRIPTION : Gets app settings from localstorage.  If no app settings have been saved in localstorage then it initializes all app settings.
 function getAppSettings(){
    
@@ -122,6 +157,37 @@ function getSingleNote(toGetWithKey, toGetWithValue){
 
 
 
+//DESCRIPTION : Combines a newly created note object with one that has been parsed from JSON
+//@param : object blankNoteObj Note object with methods but no values.
+//@param : object parsedNoteObj Note object with values but no methods.
+//@return : object blankNoteObj A note object made assigning the values of parsedNoteObj to those of parsedNoteObj.
+function integrateNoteObjects(blankNoteObj, parsedNoteObj){
+   
+   blankNoteObj.id = parsedNoteObj.id;
+   blankNoteObj.title = parsedNoteObj.title;
+   blankNoteObj.content = parsedNoteObj.content;
+   blankNoteObj.positionTop = parsedNoteObj.positionTop;
+   blankNoteObj.positionLeft = parsedNoteObj.positionLeft;
+
+   return blankNoteObj;
+}
+
+
+
+
+
+//DESCRIPTION : Populates the dragable area with the saved notes.
+function populateNotesContainer(){
+   
+   //first get all notes in an array
+   var allNotes = getAllSavedNotesAsArray();
+   
+}
+
+
+
+
+
 
 //DESCRIPTION : Creates an app settings object from the stored values retrieved from localstorage.
 //@param : string appSettingsJson The app settings in JSON format. 
@@ -164,7 +230,7 @@ function saveNote(){
    //create new note object
    var newlySavedNoteObj = new NoteObj();
    
-   //give the values
+   //get the values from the form
    newlySavedNoteObj.id = $('#note_id_field').val();
    newlySavedNoteObj.title = $('#title_textbox').val();
    newlySavedNoteObj.content = $('#content_textbox').val();
@@ -177,6 +243,10 @@ function saveNote(){
       newlySavedNoteObj = retrieveCoordinates(newlySavedNoteObj);
       
    }
+   
+   //save the note
+   var newlySaveNoteJson = JSON.stringify(newlySavedNoteObj);
+   localStorage.setItem(newlySavedNoteObj.id, newlySaveNoteJson);
    
    
 
@@ -200,10 +270,10 @@ function appSettingsObj(){
 //NOTE OBJECT
 function NoteObj(){
    
-   //initialize vars
+   //INITIALIZE VARS
    noteIdCounter++;
    
-   //properties
+   //PROPERTIES
    this.id = noteIdCounter;
    this.title = '';
    this.content = '';
@@ -212,7 +282,9 @@ function NoteObj(){
    this.positionLeft = 0;
    this.type = "note_object"
    
-   //methods
+   //METHODS
+   
+   //generate edit form
    this.generateEditForm = function(){
       
       var editFormHtml = '<input type="hidden" id="note_id_field" value="' + this.id +'">\n\
@@ -242,6 +314,8 @@ function NoteObj(){
       return editFormHtml;
       
    }
+   
+   
    
 }
 
