@@ -133,3 +133,17 @@ body{
    margin-right: auto;
 }
 
+.note_small_form_container{
+   max-width: 200px;
+   min-width: 200px;
+}
+
+.edit_icon_container{
+   max-width: 50px;
+}
+
+#edit_icon{
+   max-width:100%;
+   max-height:100%;
+}
+

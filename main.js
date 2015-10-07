@@ -1,7 +1,7 @@
 
 //////////////////////////////GLOBALS////////////////////////////////
-var myAppSettingsObj;
-var noteIdCounter;
+myAppSettingsObj = getAppSettings();
+var noteIdCounter = 0;
  
 ///////////////////////BOILERPLATE FUNCTIONS////////////////////////
 
@@ -45,6 +45,9 @@ function bondage(){
       
       //inject the form html into the DOM
       $('#notes_container').html(newNoteFormHtml);
+      
+      //catch all to bind to the save button
+      bondage();
       
    });
    
@@ -103,6 +106,7 @@ function getAppSettings(){
    if(localStorage.getItem("stickyNotesAppSettings") === null){
       myAppSettingsObj = new appSettingsObj();
       myAppSettingsObj.noteIdCounter = 0;
+      saveAppSettings(myAppSettingsObj);
    }
    
    //retrieve app settings from memory
@@ -182,6 +186,33 @@ function populateNotesContainer(){
    //first get all notes in an array
    var allNotes = getAllSavedNotesAsArray();
    
+   for(var i = 0; i < allNotes.length; i++){
+      
+      //integrate each saved note object to give it methods
+      var currentSavedNoteObj = new NoteObj();
+      currentSavedNoteObj = integrateNoteObjects(currentSavedNoteObj, allNotes[i]);
+      
+      //create small form note HTML element for each saved note obj
+      var currentSavedNoteHtml = currentSavedNoteObj.generateSmallFormDragableElement();
+      
+      //if it is the first note to be injected into the DOM then it needs to replace what is already in the dragbale note area
+      if(i == 0){
+         $('#notes_container').html(currentSavedNoteHtml);
+      }else{
+         $('#notes_container').appendTo(currentSavedNoteHtml);
+      }
+      
+      //position
+      $(currentSavedNoteHtml).css({
+         left: currentSavedNoteObj.postitionLeft, 
+         top: currentSavedNoteObj.positionTop      
+      });
+      
+      //fade in
+      $(currentSavedNoteHtml).hide().fadeIn();
+      
+   }
+   
 }
 
 
@@ -222,6 +253,22 @@ function retrieveCoordinates(toReplaceCoordinatesOfNoteObj){
 
 
 
+//DESCRIPTION : Saves the app settings to localstorage.
+//@param : object toSaveAppSettingObj The app settings object to save to local storage.
+function saveAppSettings(toSaveAppSettingObj){
+   
+   //get app settings as a JSON string
+   var toSaveAppSettingJson = JSON.stringify(toSaveAppSettingObj);
+   
+   //save it 
+   localStorage.setItem("stickyNotesAppSettings", toSaveAppSettingJson);
+   
+}
+
+
+
+
+
 
 
 //DESCRIPTION : Saves a note to local storage.
@@ -231,7 +278,11 @@ function saveNote(){
    var newlySavedNoteObj = new NoteObj();
    
    //get the values from the form
-   newlySavedNoteObj.id = $('#note_id_field').val();
+   if(!isNaN(parseInt($('#note_id_field').val()))){
+      newlySavedNoteObj.id = $('#note_id_field').val();
+   }else{
+      newlySavedNoteObj.id = getLastUsedId + 1;
+   }
    newlySavedNoteObj.title = $('#title_textbox').val();
    newlySavedNoteObj.content = $('#content_textbox').val();
    newlySavedNoteObj.color = $('#color_chooser').val();
@@ -271,10 +322,10 @@ function appSettingsObj(){
 function NoteObj(){
    
    //INITIALIZE VARS
-   noteIdCounter++;
    
+
    //PROPERTIES
-   this.id = noteIdCounter;
+   this.id = 0;
    this.title = '';
    this.content = '';
    this.color = '';
@@ -313,7 +364,28 @@ function NoteObj(){
       
       return editFormHtml;
       
-   }
+   };
+   
+   
+   
+   //generate small form html
+   this.generateSmallFormDragableElement = function(){
+      
+      var smallFormHtml = '<div id="' + this.id + '" style"background-color: ' + this.color + ';" class="note_small_form_container">\n\
+                              <span class="title_field">' + this.title + '</span>\n\
+                              <span id="' + this.id + '" class="edit_icon_container"><img id="edit_icon" src="edit_icon01.svg" alt="edit"></span>\n\
+                           </div>';
+      
+      return smallFormHtml;
+      
+   };
+   
+   
+   
+      var appSettingsObj = getAppSettings();
+      
+      return appSettingsObj.noteIdCounter;
+      
    
    
    
